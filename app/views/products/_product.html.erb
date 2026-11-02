@@ -1,0 +1,55 @@
+<div class="col">
+  <div class="card h-100 border-0 shadow-sm product-card">
+
+    <div class="bg-white" style="height: 260px; overflow: hidden;">
+
+      <% if product.images.attached? %>
+        <%= image_tag product.images.first,
+            class: "w-100 h-100",
+            style: "object-fit: contain;" %>
+      <% else %>
+        <div class="h-100 d-flex align-items-center justify-content-center text-secondary">
+          <div class="text-center">
+            <div class="fs-1">✿</div>
+            <div>Фото товару</div>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+
+    <div class="card-body d-flex flex-column">
+
+      <div class="small text-secondary mb-2">
+        <%= product.category.name %>
+      </div>
+
+      <h5 class="card-title fw-bold">
+        <%= product.title %>
+      </h5>
+
+      <p class="text-secondary small mb-2">
+        <%= fabric_label(product.fabric) %> ·
+        <%= color_label(product.color) %>
+      </p>
+
+      <p class="text-secondary small">
+        <%= target_group_label(product.target_group) %>
+      </p>
+
+      <div class="mt-auto">
+
+        <div class="fs-5 fw-bold text-dark mb-3">
+          <%= number_to_currency(product.price, unit: "₴", format: "%n %u", precision: 0) %>
+        </div>
+
+        <%= link_to "Переглянути товар",
+            product_path(product), data: { turbo_frame: "_top" },
+            class: "btn btn-dark w-100" %>
+
+
+      </div>
+
+    </div>
+  </div>
+</div>

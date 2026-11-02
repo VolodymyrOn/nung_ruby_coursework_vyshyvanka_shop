@@ -1,0 +1,177 @@
+<div class="mb-4">
+  <h1 class="fw-bold">Оформлення замовлення</h1>
+  <p class="text-secondary">
+    Заповніть контактні дані та оберіть спосіб доставки й оплати.
+  </p>
+</div>
+
+<div class="row g-4">
+
+  <div class="col-lg-7">
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+
+        <%= form_with model: @order, url: orders_path do |f| %>
+
+          <% if @order.errors.any? %>
+            <div class="alert alert-danger">
+              <strong>Не вдалося оформити замовлення:</strong>
+
+              <ul class="mb-0 mt-2">
+                <% @order.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <h5 class="fw-bold mb-3">Контактна інформація</h5>
+
+          <div class="mb-3">
+            <%= f.label :customer_name, "Ім'я та прізвище",
+                class: "form-label" %>
+
+            <%= f.text_field :customer_name,
+                class: "form-control",
+                required: true %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :customer_phone, "Номер телефону",
+                class: "form-label" %>
+
+            <%= f.telephone_field :customer_phone,
+                class: "form-control",
+                required: true %>
+          </div>
+
+          <div class="mb-4">
+            <%= f.label :customer_email, "Електронна пошта",
+                class: "form-label" %>
+
+            <%= f.email_field :customer_email,
+                class: "form-control",
+                required: true %>
+          </div>
+
+          <hr>
+
+          <h5 class="fw-bold mb-3">Доставка</h5>
+
+          <div class="mb-3">
+            <%= f.label :delivery_method, "Спосіб доставки",
+                class: "form-label" %>
+
+            <%= f.select :delivery_method,
+                [
+                  ["Нова Пошта", "nova_poshta"],
+                  ["Укрпошта", "ukrposhta"],
+                  ["Самовивіз", "pickup"]
+                ],
+                {},
+                class: "form-select",
+                required: true %>
+          </div>
+
+          <div class="mb-3" id="delivery-address-field">
+            <%= f.label :delivery_address,
+                "Адреса / номер відділення",
+                class: "form-label" %>
+
+            <%= f.text_area :delivery_address,
+                rows: 2,
+                class: "form-control",
+                placeholder: "Місто, відділення або адреса доставки" %>
+          </div>
+
+          <hr>
+
+          <h5 class="fw-bold mb-3">Оплата</h5>
+
+          <div class="mb-3">
+            <%= f.label :payment_method, "Спосіб оплати",
+                class: "form-label" %>
+
+            <%= f.select :payment_method,
+                [
+                  ["Оплата карткою", "card"],
+                  ["Післяплата", "cod"]
+                ],
+                {},
+                class: "form-select",
+                required: true %>
+          </div>
+
+          <div class="mb-4">
+            <%= f.label :notes, "Коментар до замовлення",
+                class: "form-label" %>
+
+            <%= f.text_area :notes,
+                rows: 3,
+                class: "form-control",
+                placeholder: "Додаткова інформація (необов'язково)" %>
+          </div>
+
+          <%= f.submit "Підтвердити замовлення",
+              class: "btn btn-dark btn-lg w-100" %>
+
+        <% end %>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-lg-5">
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+
+        <h5 class="fw-bold mb-3">Ваше замовлення</h5>
+
+        <% @cart.cart_items.includes(:product).each do |item| %>
+
+          <div class="d-flex justify-content-between gap-3 mb-3">
+
+            <div>
+              <div class="fw-semibold">
+                <%= item.product.title %>
+              </div>
+
+              <small class="text-secondary">
+                Розмір: <%= item.size %> ·
+                Кількість: <%= item.quantity %>
+              </small>
+            </div>
+
+            <strong class="text-nowrap">
+              <%= number_to_currency(item.product.price * item.quantity,
+                  unit: "₴", format: "%n %u", precision: 0) %>
+            </strong>
+
+          </div>
+
+        <% end %>
+
+        <hr>
+
+        <div class="d-flex justify-content-between">
+          <strong>До сплати:</strong>
+
+          <strong class="fs-4">
+            <%= number_to_currency(@cart.total_price,
+                unit: "₴", format: "%n %u", precision: 0) %>
+          </strong>
+        </div>
+
+        <p class="text-secondary small mt-3 mb-0">
+          Остаточна наявність товарів перевіряється під час підтвердження замовлення.
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

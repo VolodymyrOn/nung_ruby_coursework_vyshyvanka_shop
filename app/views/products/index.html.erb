@@ -1,0 +1,199 @@
+<div class="mb-4">
+  <h1 class="fw-bold">Каталог вишиванок</h1>
+  <p class="text-secondary mb-0">
+    Український вишитий одяг для всієї родини
+  </p>
+</div>
+
+<%= form_with url: products_path,
+    method: :get,
+    local: true,
+    data: {
+      turbo_frame: "products_results",
+      controller: "live-search",
+      live_search_delay_value: 350
+    } do |f| %>
+
+  <div class="row g-4">
+
+    <!-- Панель фільтрів -->
+    <aside class="col-lg-3">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Фільтри</h5>
+            <i class="bi bi-sliders fs-5 text-secondary"></i>
+          </div>
+
+          <!-- Пошук -->
+          <div class="mb-4">
+            <%= f.label :query, "Назва товару",
+                class: "form-label fw-semibold" %>
+
+            <div class="input-group">
+              <span class="input-group-text bg-white">
+                <i class="bi bi-search"></i>
+              </span>
+
+              <%= f.text_field :query,
+                  value: params[:query],
+                  class: "form-control",
+                  placeholder: "Почніть вводити назву...",
+                  autocomplete: "off",
+                  data: {
+                    action: "input->live-search#search"
+                  } %>
+            </div>
+          </div>
+
+          <!-- Цільова група -->
+          <div class="mb-3">
+            <%= f.label :target_group, "Для кого",
+                class: "form-label fw-semibold" %>
+
+            <%= f.select :target_group,
+                options_for_select([
+                  ["Чоловіки", "men"],
+                  ["Жінки", "women"],
+                  ["Дівчатка", "girls"],
+                  ["Хлопчики", "boys"]
+                ], params[:target_group]),
+                { include_blank: "Усі групи" },
+                class: "form-select" %>
+          </div>
+
+          <!-- Категорія -->
+          <div class="mb-3">
+            <%= f.label :category_id, "Категорія",
+                class: "form-label fw-semibold" %>
+
+            <%= f.select :category_id,
+                options_from_collection_for_select(
+                  @categories,
+                  :id,
+                  :name,
+                  params[:category_id]
+                ),
+                { include_blank: "Усі категорії" },
+                class: "form-select" %>
+          </div>
+
+          <!-- Матеріал -->
+          <div class="mb-3">
+            <%= f.label :fabric, "Матеріал",
+                class: "form-label fw-semibold" %>
+
+            <%= f.select :fabric,
+                options_for_select([
+                  ["Льон", "linen"],
+                  ["Бавовна", "cotton"],
+                  ["Домоткане полотно", "homespun"]
+                ], params[:fabric]),
+                { include_blank: "Усі матеріали" },
+                class: "form-select" %>
+          </div>
+
+
+
+          <hr>
+
+          <!-- Ціна -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Ціна, ₴</label>
+
+            <div class="row g-2">
+              <div class="col-6">
+                <%= f.number_field :min_price,
+                    value: params[:min_price],
+                    min: 0,
+                    step: 1,
+                    class: "form-control",
+                    placeholder: "Від" %>
+              </div>
+
+              <div class="col-6">
+                <%= f.number_field :max_price,
+                    value: params[:max_price],
+                    min: 0,
+                    step: 1,
+                    class: "form-control",
+                    placeholder: "До" %>
+              </div>
+            </div>
+          </div>
+
+          <%= f.submit "Застосувати фільтри",
+              class: "btn btn-dark w-100 mb-2" %>
+
+          <%= link_to products_path,
+              class: "btn btn-outline-secondary w-100" do %>
+            <i class="bi bi-arrow-counterclockwise me-1"></i>
+            Скинути фільтри
+          <% end %>
+
+        </div>
+      </div>
+    </aside>
+
+    <!-- Результати -->
+    <section class="col-lg-9">
+
+      <%= turbo_frame_tag "products_results" do %>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+          <div>
+            <h5 class="fw-bold mb-1">Товари</h5>
+            <span class="text-secondary small">
+              Знайдено: <%= @pagy.count %>
+            </span>
+          </div>
+
+          
+        </div>
+
+        <% if @products.any? %>
+
+          <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+
+            <%= render partial: "product",
+                collection: @products,
+                as: :product %>
+
+          </div>
+
+          <div class="d-flex justify-content-center mt-4">
+            <%== pagy_nav(@pagy) %>
+          </div>
+
+        <% else %>
+
+          <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+
+              <i class="bi bi-search fs-1 text-secondary"></i>
+
+              <h5 class="fw-bold mt-3">
+                Товарів не знайдено
+              </h5>
+
+              <p class="text-secondary">
+                Спробуйте змінити параметри пошуку або скинути фільтри.
+              </p>
+
+              <%= link_to "Показати всі товари",
+                  products_path,
+                  class: "btn btn-dark" %>
+
+            </div>
+          </div>
+
+        <% end %>
+
+      <% end %>
+
+    </section>
+
+  </div>
+
+<% end %>

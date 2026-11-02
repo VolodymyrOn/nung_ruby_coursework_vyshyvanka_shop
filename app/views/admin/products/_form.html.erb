@@ -1,0 +1,200 @@
+
+<%= form_with model: [:admin, @product], local: true, html: { multipart: true } do |f| %>
+  <% if @product.errors.any? %>
+    <div class="alert alert-danger">
+      <h6 class="fw-bold">Не вдалося зберегти товар:</h6>
+      <ul class="mb-0">
+        <% @product.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <strong>Основна інформація</strong>
+        </div>
+
+        <div class="card-body">
+          <div class="mb-3">
+            <%= f.label :title, "Назва товару", class: "form-label fw-semibold" %>
+            <%= f.text_field :title, class: "form-control",
+                placeholder: "Наприклад, Вишиванка чоловіча" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :description, "Опис товару", class: "form-label fw-semibold" %>
+            <%= f.text_area :description, rows: 5, class: "form-control",
+                placeholder: "Детальний опис товару..." %>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <%= f.label :category_id, "Категорія", class: "form-label fw-semibold" %>
+              <%= f.collection_select :category_id, Category.order(:name),
+                  :id, :name,
+                  { prompt: "Оберіть категорію" },
+                  class: "form-select" %>
+            </div>
+
+            <div class="col-md-6">
+              <%= f.label :price, "Ціна (грн)", class: "form-label fw-semibold" %>
+              <%= f.number_field :price, step: 0.01, min: 0,
+                  class: "form-control", placeholder: "0.00" %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <strong>Характеристики товару</strong>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <%= f.label :target_group, "Цільова група", class: "form-label fw-semibold" %>
+              <%= f.select :target_group,
+                  options_for_select(
+                    [["Чоловіча", "men"], ["Жіноча", "women"],
+                     ["Для дівчаток", "girls"], ["Для хлопчиків", "boys"]],
+                    @product.target_group
+                  ),
+                  { prompt: "Оберіть групу" },
+                  class: "form-select" %>
+            </div>
+
+            <div class="col-md-6">
+              <%= f.label :fabric, "Матеріал", class: "form-label fw-semibold" %>
+              <%= f.select :fabric,
+                  options_for_select(
+                    [["Льон", "linen"], ["Бавовна", "cotton"],
+                     ["Домоткане полотно", "homespun"]],
+                    @product.fabric
+                  ),
+                  { prompt: "Оберіть матеріал" },
+                  class: "form-select" %>
+            </div>
+
+            <div class="col-md-6">
+              <%= f.label :color, "Колір", class: "form-label fw-semibold" %>
+              <%= f.text_field :color,
+                  class: "form-control",
+                  placeholder: "Наприклад, молочний із червоною вишивкою" %>
+            </div>
+
+            <div class="col-md-6">
+              <%= f.label :technique, "Техніка вишивки", class: "form-label fw-semibold" %>
+              <%= f.text_field :technique, class: "form-control",
+                  placeholder: "Наприклад, хрестик" %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <strong>Залишки за розмірами</strong>
+        </div>
+
+        <div class="card-body">
+          <p class="text-muted small">
+            Вкажіть кількість доступних одиниць товару для кожного розміру.
+          </p>
+
+          <div class="row g-3">
+            <% [
+              ["S", :stock_s],
+              ["M", :stock_m],
+              ["L", :stock_l],
+              ["XL", :stock_xl],
+              ["2XL", :stock_2xl]
+            ].each do |label, field| %>
+              <div class="col-6 col-md">
+                <%= f.label field, label, class: "form-label fw-semibold" %>
+                <%= f.number_field field, min: 0, step: 1,
+                    class: "form-control" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <strong>Фотографії товару</strong>
+        </div>
+
+        <div class="card-body">
+          <% if @product.images.attached? %>
+            <p class="small text-muted mb-2">Поточні фотографії:</p>
+
+            <div class="row g-2 mb-3">
+              <% @product.images.each do |image| %>
+                <div class="col-6">
+                  <div class="border rounded p-2">
+                    <%= image_tag image,
+                        class: "img-fluid rounded mb-2",
+                        style: "width: 100%; height: 120px; object-fit: cover;" %>
+
+                    <div class="form-check">
+                      <%= check_box_tag "product[remove_image_ids][]",
+                          image.id, false,
+                          id: "remove_image_#{image.id}",
+                          class: "form-check-input" %>
+                      <%= label_tag "remove_image_#{image.id}",
+                          "Видалити", class: "form-check-label small text-danger" %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%= f.label :images, "Додати фотографії", class: "form-label fw-semibold" %>
+          <%= f.file_field :images,
+              multiple: true,
+              accept: "image/*",
+              class: "form-control" %>
+
+          <small class="text-muted d-block mt-2">
+            Можна вибрати декілька зображень одночасно.
+            Під час редагування нові фото додаються до наявних.
+          </small>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <strong>Публікація</strong>
+        </div>
+
+        <div class="card-body">
+          <div class="form-check form-switch">
+            <%= f.check_box :is_active, class: "form-check-input", role: "switch" %>
+            <%= f.label :is_active, "Активний товар",
+                class: "form-check-label fw-semibold" %>
+          </div>
+
+          <small class="text-muted d-block mt-2">
+            Неактивні товари не відображаються у відкритому каталозі.
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 justify-content-end mt-3">
+    <%= link_to "Скасувати", admin_products_path,
+        class: "btn btn-outline-secondary px-4" %>
+
+    <%= f.submit(@product.persisted? ? "Зберегти зміни" : "Створити товар",
+        class: "btn btn-warning fw-semibold px-4") %>
+  </div>
+<% end %>

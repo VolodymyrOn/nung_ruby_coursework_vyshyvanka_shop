@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  price: 9.99
+  fabric: MyString
+  color: MyString
+  technique: MyString
+  target_group: MyString
+  category: one
+  stock_s: 1
+  stock_m: 1
+  stock_l: 1
+  stock_xl: 1
+  stock_2xl: 1
+  is_active: false
+
+two:
+  title: MyString
+  description: MyText
+  price: 9.99
+  fabric: MyString
+  color: MyString
+  technique: MyString
+  target_group: MyString
+  category: two
+  stock_s: 1
+  stock_m: 1
+  stock_l: 1
+  stock_xl: 1
+  stock_2xl: 1
+  is_active: false

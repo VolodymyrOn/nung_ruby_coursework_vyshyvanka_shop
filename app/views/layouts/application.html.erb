@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <title>Етно-Стиль — магазин вишиванок</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    >
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+  </head>
+
+  <body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+      <div class="container">
+
+        <%= link_to "Етно-Стиль", root_path,
+            class: "navbar-brand fw-bold text-warning fs-4" %>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <%= link_to "Каталог", products_path, class: "nav-link" %>
+            </li>
+
+            <li class="nav-item">
+              <%= link_to "Контакти", new_contact_message_path, class: "nav-link" %>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav align-items-lg-center">
+
+            <% if user_signed_in? %>
+
+              <li class="nav-item">
+                <%= link_to "Кошик", cart_path, class: "nav-link" %>
+              </li>
+
+              <li class="nav-item">
+                <%= link_to "Мої замовлення", orders_path, class: "nav-link" %>
+              </li>
+
+              <li class="nav-item">
+                <%= link_to profile_path, class: "nav-link" do %>
+                  <i class="bi bi-person-circle me-1"></i>
+                  Особистий кабінет
+                <% end %>
+              </li>
+
+              <% if current_user.admin? %>
+                <li class="nav-item">
+                  <%= link_to "Адмінпанель",
+                      admin_root_path,
+                      class: "nav-link" %>
+                </li>
+              <% end %>
+
+              <li class="nav-item">
+                <span class="navbar-text text-light me-3">
+                  <%= current_user.first_name %>
+                </span>
+              </li>
+
+              <li class="nav-item">
+                <%= button_to "Вийти", destroy_user_session_path,
+                    method: :delete,
+                    class: "btn btn-outline-warning btn-sm" %>
+              </li>
+
+            <% else %>
+
+              <li class="nav-item">
+                <%= link_to "Увійти", new_user_session_path,
+                    class: "nav-link" %>
+              </li>
+
+              <li class="nav-item ms-lg-2">
+                <%= link_to "Реєстрація", new_user_registration_path,
+                    class: "btn btn-warning btn-sm fw-semibold" %>
+              </li>
+
+            <% end %>
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-4">
+
+      <% flash.each do |type, message| %>
+        <% bootstrap_type = {
+          "notice" => "success",
+          "alert" => "danger",
+          "success" => "success",
+          "error" => "danger"
+        }.fetch(type.to_s, "info") %>
+
+        <div class="alert alert-<%= bootstrap_type %> alert-dismissible fade show"
+             role="alert">
+          <%= message %>
+
+          <button type="button" class="btn-close"
+                  data-bs-dismiss="alert"></button>
+        </div>
+      <% end %>
+
+      <%= yield %>
+
+    </main>
+
+    <footer class="bg-dark text-light mt-5 py-4">
+      <div class="container text-center">
+        <div class="text-warning fw-bold fs-5 mb-2">Етно-Стиль</div>
+        <p class="mb-1">Інтернет-магазин українського вишитого одягу</p>
+        <small class="text-secondary">
+          © <%= Date.current.year %> Етно-Стиль. Усі права захищені.
+        </small>
+      </div>
+    </footer>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+  </body>
+</html>

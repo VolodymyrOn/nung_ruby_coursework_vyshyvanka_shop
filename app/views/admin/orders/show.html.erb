@@ -1,0 +1,248 @@
+
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">
+        Замовлення #<%= @order.id %>
+      </h1>
+
+      <p class="text-muted mb-0">
+        Створено <%= l(@order.created_at, format: :long) %>
+      </p>
+    </div>
+
+    <%= link_to admin_orders_path, class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left me-1"></i>
+      До списку замовлень
+    <% end %>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <strong>Товари в замовленні</strong>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-3">Товар</th>
+                <th>Розмір</th>
+                <th>Ціна</th>
+                <th>Кількість</th>
+                <th class="text-end pe-3">Сума</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @order_items.each do |item| %>
+                <tr>
+                  <td class="ps-3">
+                    <div class="fw-semibold">
+                      <%= item.product_title %>
+                    </div>
+
+                    <% if item.product %>
+                      <small class="text-muted">
+                        ID товару: <%= item.product_id %>
+                      </small>
+                    <% end %>
+                  </td>
+
+                  <td>
+                    <span class="badge bg-light text-dark border">
+                      <%= item.size %>
+                    </span>
+                  </td>
+
+                  <td class="text-nowrap">
+                    <%= number_to_currency(item.unit_price,
+                        unit: "₴", precision: 2, format: "%n %u") %>
+                  </td>
+
+                  <td><%= item.quantity %></td>
+
+                  <td class="text-end pe-3 fw-semibold text-nowrap">
+                    <%= number_to_currency(item.unit_price * item.quantity,
+                        unit: "₴", precision: 2, format: "%n %u") %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+
+            <tfoot class="table-light">
+              <tr>
+                <td colspan="4" class="text-end fw-bold">
+                  Загальна сума:
+                </td>
+                <td class="text-end pe-3 fw-bold text-nowrap">
+                  <%= number_to_currency(@order.total_amount,
+                      unit: "₴", precision: 2, format: "%n %u") %>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <strong>Інформація про клієнта</strong>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <small class="text-muted d-block">Ім'я клієнта</small>
+              <strong><%= @order.customer_name %></strong>
+            </div>
+
+            <div class="col-md-6">
+              <small class="text-muted d-block">Телефон</small>
+              <strong><%= @order.customer_phone %></strong>
+            </div>
+
+            <div class="col-md-6">
+              <small class="text-muted d-block">Email</small>
+              <strong><%= @order.customer_email %></strong>
+            </div>
+
+            <div class="col-md-6">
+              <small class="text-muted d-block">Обліковий запис</small>
+              <strong><%= @order.user&.email || "Невідомий" %></strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <strong>Доставка та оплата</strong>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <small class="text-muted d-block">Спосіб доставки</small>
+              <strong>
+                <%= delivery_method_label(@order.delivery_method) %>
+              </strong>
+            </div>
+
+            <div class="col-md-6">
+              <small class="text-muted d-block">Спосіб оплати</small>
+              <strong>
+                <%= payment_method_label(@order.payment_method) %>
+              </strong>
+            </div>
+
+            <% if @order.delivery_address.present? %>
+              <div class="col-12">
+                <small class="text-muted d-block">Адреса / відділення</small>
+                <strong><%= @order.delivery_address %></strong>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <% if @order.notes.present? %>
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-header bg-white py-3">
+            <strong>Коментар клієнта</strong>
+          </div>
+
+          <div class="card-body">
+            <%= simple_format(@order.notes) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <strong>Статус замовлення</strong>
+        </div>
+
+        <div class="card-body">
+          <p class="text-muted small mb-2">Поточний статус:</p>
+
+          <% status_class = {
+            "pending" => "bg-warning-subtle text-warning-emphasis",
+            "confirmed" => "bg-info-subtle text-info-emphasis",
+            "shipped" => "bg-primary-subtle text-primary-emphasis",
+            "completed" => "bg-success-subtle text-success",
+            "cancelled" => "bg-secondary-subtle text-secondary"
+          }.fetch(@order.status, "bg-light text-dark") %>
+
+          <div class="mb-4">
+            <span class="badge fs-6 <%= status_class %>">
+              <%= order_status_label(@order.status) %>
+            </span>
+          </div>
+
+          <% if @order.allowed_next_statuses.any? %>
+            <%= form_with model: [:admin, @order], method: :patch, local: true do |f| %>
+              <div class="mb-3">
+                <%= f.label :status, "Новий статус",
+                    class: "form-label fw-semibold" %>
+
+                <%= f.select :status,
+                    options_for_select(
+                      @order.allowed_next_statuses.map { |status|
+                        [order_status_label(status), status]
+                      }
+                    ),
+                    {},
+                    class: "form-select" %>
+              </div>
+
+              <%= f.submit "Змінити статус",
+                  class: "btn btn-warning fw-semibold w-100",
+                  data: {
+                    turbo_confirm: "Підтвердити зміну статусу замовлення?"
+                  } %>
+            <% end %>
+
+            <% if @order.can_be_cancelled? %>
+              <div class="alert alert-warning small mt-3 mb-0">
+                <i class="bi bi-exclamation-triangle me-1"></i>
+                Під час скасування товари будуть повернуті на склад.
+              </div>
+            <% end %>
+          <% else %>
+            <div class="alert alert-light border mb-0">
+              Це кінцевий статус. Подальша зміна замовлення недоступна.
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <small class="text-muted d-block mb-1">Номер замовлення</small>
+          <div class="fs-4 fw-bold mb-3">#<%= @order.id %></div>
+
+          <small class="text-muted d-block mb-1">Кількість позицій</small>
+          <div class="fw-semibold mb-3">
+            <%= @order_items.count %>
+          </div>
+
+          <small class="text-muted d-block mb-1">Загальна кількість товарів</small>
+          <div class="fw-semibold mb-3">
+            <%= @order_items.sum(&:quantity) %>
+          </div>
+
+          <small class="text-muted d-block mb-1">Сума замовлення</small>
+          <div class="fs-5 fw-bold text-success">
+            <%= number_to_currency(@order.total_amount,
+                unit: "₴", precision: 2, format: "%n %u") %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

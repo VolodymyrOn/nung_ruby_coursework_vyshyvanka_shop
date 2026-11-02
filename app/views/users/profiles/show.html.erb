@@ -1,0 +1,135 @@
+<div class="container py-5">
+  <div class="mb-4">
+    <h1 class="fw-bold">Особистий кабінет</h1>
+    <p class="text-muted">Керуйте персональними даними та переглядайте свої замовлення.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-person-circle fs-2 text-warning me-3"></i>
+            <h5 class="mb-0">Мої дані</h5>
+          </div>
+
+          <p class="mb-2">
+            <strong>Ім'я:</strong>
+            <%= current_user.first_name %>
+          </p>
+
+          <p class="mb-2">
+            <strong>Прізвище:</strong>
+            <%= current_user.last_name %>
+          </p>
+
+          <p class="mb-2">
+            <strong>Email:</strong>
+            <%= current_user.email %>
+          </p>
+
+          <p class="mb-4">
+            <strong>Телефон:</strong>
+            <%= current_user.phone.presence || "Не вказано" %>
+          </p>
+
+          <%= link_to "Редагувати профіль",
+                      edit_user_registration_path,
+                      class: "btn btn-warning w-100" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">Мої замовлення</h5>
+
+            <%= link_to "Усі замовлення",
+                        orders_path,
+                        class: "btn btn-outline-dark btn-sm" %>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-6">
+              <div class="bg-light rounded p-3">
+                <div class="text-muted small">Усього замовлень</div>
+                <div class="fs-3 fw-bold">
+                  <%= @orders_count %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="bg-light rounded p-3">
+                <div class="text-muted small">Останні замовлення</div>
+                <div class="fs-3 fw-bold">
+                  <%= @orders.count %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <% if @orders.any? %>
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>№</th>
+                    <th>Дата</th>
+                    <th>Сума</th>
+                    <th>Статус</th>
+                    <th></th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <% @orders.each do |order| %>
+                    <tr>
+                      <td>#<%= order.id %></td>
+
+                      <td>
+                        <%= l(order.created_at, format: :short) %>
+                      </td>
+
+                      <td class="fw-semibold">
+                        <%= number_to_currency(
+                              order.total_amount,
+                              unit: "₴",
+                              precision: 2,
+                              format: "%n %u"
+                            ) %>
+                      </td>
+
+                      <td>
+                        <span class="badge bg-secondary">
+                          <%= order_status_label(order.status) %>
+                        </span>
+                      </td>
+
+                      <td>
+                        <%= link_to "Деталі",
+                                    order_path(order),
+                                    class: "btn btn-outline-dark btn-sm" %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="text-center py-4">
+              <i class="bi bi-bag fs-1 text-muted"></i>
+              <p class="text-muted mt-3">Ви ще не оформлювали замовлень.</p>
+
+              <%= link_to "Перейти до каталогу",
+                          products_path,
+                          class: "btn btn-warning" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

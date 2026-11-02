@@ -1,0 +1,117 @@
+
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Звернення #<%= @contact_message.id %></h1>
+      <p class="text-muted mb-0">
+        Отримано <%= l(@contact_message.created_at, format: :long) %>
+      </p>
+    </div>
+
+    <%= link_to admin_contact_messages_path,
+        class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left me-1"></i>
+      До списку звернень
+    <% end %>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+          <strong>Повідомлення клієнта</strong>
+        </div>
+
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">
+            <%= @contact_message.subject %>
+          </h5>
+
+          <div class="bg-light rounded-3 p-3">
+            <%= simple_format(@contact_message.body) %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <strong>Дані відправника</strong>
+        </div>
+
+        <div class="card-body">
+          <div class="mb-3">
+            <small class="text-muted d-block">Ім'я</small>
+            <strong><%= @contact_message.name %></strong>
+          </div>
+
+          <div class="mb-3">
+            <small class="text-muted d-block">Email</small>
+            <strong>
+              <%= mail_to @contact_message.email,
+                  @contact_message.email,
+                  class: "text-decoration-none" %>
+            </strong>
+          </div>
+
+          <div>
+            <small class="text-muted d-block">Дата отримання</small>
+            <strong>
+              <%= l(@contact_message.created_at, format: :long) %>
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+          <strong>Обробка звернення</strong>
+        </div>
+
+        <div class="card-body">
+          <p class="text-muted small mb-2">Поточний статус:</p>
+
+          <% status_class = {
+            "new" => "bg-warning-subtle text-warning-emphasis",
+            "read" => "bg-info-subtle text-info-emphasis",
+            "answered" => "bg-success-subtle text-success"
+          }.fetch(@contact_message.status, "bg-light text-dark") %>
+
+          <div class="mb-4">
+            <span class="badge fs-6 <%= status_class %>">
+              <%= contact_message_status_label(@contact_message.status) %>
+            </span>
+          </div>
+
+          <%= form_with model: [:admin, @contact_message],
+              method: :patch, local: true do |f| %>
+            <div class="mb-3">
+              <%= f.label :status, "Змінити статус",
+                  class: "form-label fw-semibold" %>
+
+              <%= f.select :status,
+                  options_for_select(
+                    ContactMessage::STATUSES.map { |status|
+                      [contact_message_status_label(status), status]
+                    },
+                    @contact_message.status
+                  ),
+                  {},
+                  class: "form-select" %>
+            </div>
+
+            <%= f.submit "Зберегти статус",
+                class: "btn btn-warning fw-semibold w-100" %>
+          <% end %>
+
+          <div class="alert alert-light border small mt-3 mb-0">
+            Після опрацювання звернення познач його як
+            <strong>«Опрацьовано»</strong>.
+            Відповідь клієнту надсилається окремо через поштовий сервіс.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

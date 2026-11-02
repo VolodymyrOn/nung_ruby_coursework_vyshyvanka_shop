@@ -1,0 +1,64 @@
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+
+        <h2 class="fw-bold text-center mb-4">
+          Створення нового пароля
+        </h2>
+
+        <%= form_for(resource, as: resource_name,
+                     url: password_path(resource_name),
+                     html: { method: :put }) do |f| %>
+
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <%= f.hidden_field :reset_password_token %>
+
+          <div class="mb-3">
+            <%= f.label :password, "Новий пароль",
+                class: "form-label" %>
+
+            <% if @minimum_password_length %>
+              <small class="text-secondary">
+                (мінімум <%= @minimum_password_length %> символів)
+              </small>
+            <% end %>
+
+            <%= f.password_field :password,
+                class: "form-control",
+                autofocus: true,
+                required: true,
+                autocomplete: "new-password" %>
+          </div>
+
+          <div class="mb-4">
+            <%= f.label :password_confirmation,
+                "Підтвердження нового пароля",
+                class: "form-label" %>
+
+            <%= f.password_field :password_confirmation,
+                class: "form-control",
+                required: true,
+                autocomplete: "new-password" %>
+          </div>
+
+          <%= f.submit "Зберегти новий пароль",
+              class: "btn btn-dark w-100" %>
+
+        <% end %>
+
+        <hr>
+
+        <div class="text-center">
+          <%= link_to "Повернутися до входу",
+              new_user_session_path,
+              class: "text-decoration-none" %>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

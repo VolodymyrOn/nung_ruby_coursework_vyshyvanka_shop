@@ -1,0 +1,152 @@
+
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Керування товарами</h1>
+      <p class="text-muted mb-0">Каталог товарів інтернет-магазину</p>
+    </div>
+
+    <%= link_to new_admin_product_path, class: "btn btn-warning fw-semibold" do %>
+      <i class="bi bi-plus-lg me-1"></i>
+      Додати товар
+    <% end %>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <%= form_with url: admin_products_path, method: :get, local: true do |f| %>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-5">
+            <%= f.label :query, "Пошук за назвою", class: "form-label fw-semibold" %>
+            <%= f.text_field :query,
+                value: params[:query],
+                class: "form-control",
+                placeholder: "Введіть назву товару..." %>
+          </div>
+
+          <div class="col-md-3">
+            <%= f.label :category_id, "Категорія", class: "form-label fw-semibold" %>
+            <%= f.select :category_id,
+                options_from_collection_for_select(
+                  @categories, :id, :name, params[:category_id]
+                ),
+                { include_blank: "Усі категорії" },
+                class: "form-select" %>
+          </div>
+
+          <div class="col-md-2">
+            <%= f.label :status, "Статус", class: "form-label fw-semibold" %>
+            <%= f.select :status,
+                options_for_select(
+                  [["Усі товари", ""], ["Активні", "active"], ["Неактивні", "inactive"]],
+                  params[:status]
+                ),
+                {},
+                class: "form-select" %>
+          </div>
+
+          <div class="col-md-2 d-flex gap-2">
+            <%= f.submit "Фільтрувати", class: "btn btn-dark flex-grow-1" %>
+            <%= link_to "Скинути", admin_products_path, class: "btn btn-outline-secondary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+      <strong>Список товарів</strong>
+      <span class="text-muted ms-2"><%= @products.count %> записів</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">Фото</th>
+            <th>Назва</th>
+            <th>Категорія</th>
+            <th>Ціна</th>
+            <th>Залишки (S / M / L / XL / 2XL)</th>
+            <th>Статус</th>
+            <th class="text-end pe-3">Дії</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @products.each do |product| %>
+            <tr>
+              <td class="ps-3">
+                <% if product.images.attached? %>
+                  <%= image_tag product.images.first,
+                      class: "rounded border",
+                      style: "width: 65px; height: 65px; object-fit: cover;" %>
+                <% else %>
+                  <div class="bg-light rounded border d-flex align-items-center justify-content-center"
+                       style="width: 65px; height: 65px;">
+                    <i class="bi bi-image text-muted fs-4"></i>
+                  </div>
+                <% end %>
+              </td>
+
+              <td>
+                <div class="fw-semibold"><%= product.title %></div>
+                <small class="text-muted">ID: <%= product.id %></small>
+              </td>
+
+              <td><%= product.category.name %></td>
+
+              <td class="fw-semibold text-nowrap">
+                <%= number_to_currency(product.price, unit: "₴", precision: 2, format: "%n %u") %>
+              </td>
+
+              <td class="text-nowrap">
+                <%= product.stock_s %> /
+                <%= product.stock_m %> /
+                <%= product.stock_l %> /
+                <%= product.stock_xl %> /
+                <%= product.stock_2xl %>
+              </td>
+
+              <td>
+                <% if product.is_active? %>
+                  <span class="badge bg-success-subtle text-success">Активний</span>
+                <% else %>
+                  <span class="badge bg-secondary-subtle text-secondary">Неактивний</span>
+                <% end %>
+              </td>
+
+              <td class="text-end pe-3 text-nowrap">
+                <%= link_to edit_admin_product_path(product),
+                    class: "btn btn-sm btn-outline-primary",
+                    title: "Редагувати" do %>
+                  <i class="bi bi-pencil"></i>
+                <% end %>
+
+                <% if product.is_active? %>
+                  <%= button_to admin_product_path(product),
+                      method: :delete,
+                      class: "btn btn-sm btn-outline-danger",
+                      form: { class: "d-inline" },
+                      data: { turbo_confirm: "Деактивувати цей товар?" },
+                      title: "Деактивувати" do %>
+                    <i class="bi bi-trash"></i>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+
+          <% if @products.empty? %>
+            <tr>
+              <td colspan="7" class="text-center text-muted py-5">
+                Товарів за вибраними параметрами не знайдено.
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

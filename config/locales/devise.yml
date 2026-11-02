@@ -1,0 +1,32 @@
+
+uk:
+  devise:
+    confirmations:
+      confirmed: "Вашу електронну пошту успішно підтверджено."
+      send_instructions: "Інструкції для підтвердження облікового запису надіслано на вашу пошту."
+    failure:
+      already_authenticated: "Ви вже увійшли в систему."
+      unauthenticated: "Для продовження необхідно увійти в систему."
+      invalid: "Неправильна електронна пошта або пароль."
+      not_found_in_database: "Неправильна електронна пошта або пароль."
+      user:
+        not_found_in_database: "Неправильна електронна пошта або пароль."
+    mailer:
+      confirmation_instructions:
+        subject: "Підтвердження облікового запису"
+      reset_password_instructions:
+        subject: "Відновлення пароля"
+    passwords:
+      send_instructions: "Інструкції з відновлення пароля надіслано на вашу пошту."
+      updated: "Ваш пароль успішно змінено."
+      updated_not_active: "Ваш пароль успішно змінено."
+    registrations:
+      signed_up: "Ви успішно зареєструвалися!"
+      updated: "Дані облікового запису успішно оновлено."
+      destroyed: "Ваш обліковий запис видалено."
+    sessions:
+      signed_in: "Ви успішно увійшли в систему."
+      signed_out: "Ви успішно вийшли з облікового запису."
+    unlocks:
+      send_instructions: "Інструкції з розблокування надіслано на вашу пошту."
+      unlocked: "Ваш обліковий запис розблоковано."

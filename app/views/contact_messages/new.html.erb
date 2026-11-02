@@ -1,0 +1,91 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <div class="text-center mb-4">
+        <h1 class="fw-bold">Зв'яжіться з нами</h1>
+        <p class="text-secondary">
+          Маєте запитання або пропозицію? Напишіть нам.
+          Ми обов'язково розглянемо ваше звернення.
+        </p>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+
+          <% if @contact_message.errors.any? %>
+            <div class="alert alert-danger">
+              <strong>Не вдалося надіслати повідомлення:</strong>
+              <ul class="mb-0 mt-2">
+                <% @contact_message.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <%= form_with model: @contact_message do |f| %>
+
+            <div class="mb-3">
+              <%= f.label :name, "Ваше ім'я",
+                  class: "form-label fw-semibold" %>
+
+              <%= f.text_field :name,
+                  class: "form-control",
+                  placeholder: "Введіть ім'я",
+                  maxlength: 100,
+                  required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :email, "Email",
+                  class: "form-label fw-semibold" %>
+
+              <%= f.email_field :email,
+                  class: "form-control",
+                  placeholder: "example@email.com",
+                  maxlength: 255,
+                  required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :subject, "Тема звернення",
+                  class: "form-label fw-semibold" %>
+
+              <%= f.text_field :subject,
+                  class: "form-control",
+                  placeholder: "Коротко опишіть тему",
+                  maxlength: 150,
+                  required: true %>
+            </div>
+
+            <div class="mb-4">
+              <%= f.label :body, "Повідомлення",
+                  class: "form-label fw-semibold" %>
+
+              <%= f.text_area :body,
+                  rows: 6,
+                  maxlength: 5000,
+                  class: "form-control",
+                  placeholder: "Напишіть ваше повідомлення...",
+                  required: true %>
+            </div>
+
+            <div class="d-grid">
+              <%= f.submit "Надіслати повідомлення",
+                  class: "btn btn-warning btn-lg fw-semibold" %>
+            </div>
+
+          <% end %>
+
+        </div>
+      </div>
+
+      <div class="text-center mt-4 text-secondary">
+        <i class="bi bi-shield-check me-1"></i>
+        Ваші контактні дані використовуються для опрацювання звернення.
+      </div>
+
+    </div>
+  </div>
+</div>

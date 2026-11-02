@@ -1,0 +1,51 @@
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+
+        <h2 class="fw-bold text-center mb-3">
+          Відновлення пароля
+        </h2>
+
+        <p class="text-secondary text-center mb-4">
+          Вкажіть електронну пошту, яку використовували
+          під час реєстрації. Ми надішлемо інструкції
+          для відновлення доступу.
+        </p>
+
+        <%= form_for(resource, as: resource_name,
+                     url: password_path(resource_name),
+                     html: { method: :post }) do |f| %>
+
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <div class="mb-4">
+            <%= f.label :email, "Електронна пошта",
+                class: "form-label" %>
+
+            <%= f.email_field :email,
+                class: "form-control",
+                autofocus: true,
+                required: true,
+                autocomplete: "email" %>
+          </div>
+
+          <%= f.submit "Надіслати інструкції",
+              class: "btn btn-dark w-100" %>
+
+        <% end %>
+
+        <hr>
+
+        <div class="text-center">
+          <%= link_to "Повернутися до входу",
+              new_user_session_path,
+              class: "text-decoration-none" %>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

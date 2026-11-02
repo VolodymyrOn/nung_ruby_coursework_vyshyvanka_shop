@@ -1,0 +1,159 @@
+<div class="mb-3">
+  <%= link_to "← До моїх замовлень",
+      orders_path,
+      class: "text-decoration-none text-secondary" %>
+</div>
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+  <div>
+    <h1 class="fw-bold">Замовлення №<%= @order.id %></h1>
+
+    <p class="text-secondary mb-0">
+      <%= l(@order.created_at, format: :long) %>
+    </p>
+  </div>
+
+  <span class="badge <%= @order.cancelled? ? 'bg-danger' : 'bg-primary' %> fs-6 p-2">
+    <%= order_status_label(@order.status) %>
+  </span>
+
+</div>
+
+<div class="row g-4">
+
+  <div class="col-lg-7">
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+
+        <h5 class="fw-bold mb-3">Товари замовлення</h5>
+
+        <% @order_items.each do |item| %>
+
+          <div class="d-flex justify-content-between gap-3 mb-3">
+
+            <div>
+              <div class="fw-semibold">
+                <%= item.product_title %>
+              </div>
+
+              <small class="text-secondary">
+                Розмір: <%= item.size %> ·
+                Кількість: <%= item.quantity %>
+              </small>
+
+              <div class="small text-secondary">
+                Ціна за одиницю:
+                <%= number_to_currency(item.unit_price,
+                    unit: "₴", format: "%n %u", precision: 0) %>
+              </div>
+            </div>
+
+            <strong class="text-nowrap">
+              <%= number_to_currency(item.unit_price * item.quantity,
+                  unit: "₴", format: "%n %u", precision: 0) %>
+            </strong>
+
+          </div>
+
+          <hr>
+
+        <% end %>
+
+        <div class="d-flex justify-content-between">
+          <strong class="fs-5">Загальна сума:</strong>
+
+          <strong class="fs-4">
+            <%= number_to_currency(@order.total_amount,
+                unit: "₴", format: "%n %u", precision: 0) %>
+          </strong>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-lg-5">
+
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-body p-4">
+
+        <h5 class="fw-bold mb-3">Контактні дані</h5>
+
+        <p class="mb-2">
+          <strong>Покупець:</strong>
+          <%= @order.customer_name %>
+        </p>
+
+        <p class="mb-2">
+          <strong>Телефон:</strong>
+          <%= @order.customer_phone %>
+        </p>
+
+        <p class="mb-0">
+          <strong>Email:</strong>
+          <%= @order.customer_email %>
+        </p>
+
+        <hr>
+
+        <h5 class="fw-bold mb-3">Доставка та оплата</h5>
+
+        <p>
+          <strong>Доставка:</strong>
+          <%= delivery_method_label(@order.delivery_method) %>
+        </p>
+
+        <% if @order.delivery_address.present? %>
+          <p>
+            <strong>Адреса:</strong>
+            <%= @order.delivery_address %>
+          </p>
+        <% end %>
+
+        <p>
+          <strong>Оплата:</strong>
+          <%= payment_method_label(@order.payment_method) %>
+        </p>
+
+        <% if @order.notes.present? %>
+          <hr>
+
+          <strong>Коментар:</strong>
+          <p class="text-secondary mb-0"><%= @order.notes %></p>
+        <% end %>
+
+      </div>
+    </div>
+
+    <% if @order.can_be_cancelled? %>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+
+          <h6 class="fw-bold">Скасування замовлення</h6>
+
+          <p class="small text-secondary">
+            Після скасування замовлення кількість товарів буде повернена на склад.
+          </p>
+
+          <%= button_to "Скасувати замовлення",
+              cancel_order_path(@order),
+              method: :patch,
+              class: "btn btn-outline-danger w-100",
+              form: {
+                data: {
+                  turbo_confirm: "Ви впевнені, що хочете скасувати замовлення?"
+                }
+              } %>
+
+        </div>
+      </div>
+
+    <% end %>
+
+  </div>
+
+</div>

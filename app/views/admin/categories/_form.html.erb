@@ -1,0 +1,48 @@
+<%= form_with model: [:admin, @category] do |f| %>
+
+  <% if @category.errors.any? %>
+
+    <div class="alert alert-danger">
+      <strong>Перевірте введені дані:</strong>
+
+      <ul class="mb-0 mt-2">
+        <% @category.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :name, "Назва категорії",
+        class: "form-label fw-semibold" %>
+
+    <%= f.text_field :name,
+        class: "form-control",
+        required: true %>
+  </div>
+
+  <div class="mb-4">
+    <%= f.label :description, "Опис",
+        class: "form-label fw-semibold" %>
+
+    <%= f.text_area :description,
+        rows: 4,
+        class: "form-control" %>
+  </div>
+
+  <div class="d-flex gap-2">
+
+    <%= f.submit(
+      @category.new_record? ? "Створити категорію" : "Зберегти зміни",
+      class: "btn btn-dark"
+    ) %>
+
+    <%= link_to "Скасувати",
+        admin_categories_path,
+        class: "btn btn-outline-secondary" %>
+
+  </div>
+
+<% end %>

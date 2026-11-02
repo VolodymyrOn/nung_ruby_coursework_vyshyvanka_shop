@@ -1,0 +1,99 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.product-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+.btn {
+  border-radius: 8px;
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+}
+
+.navbar {
+  min-height: 68px;
+}
+
+
+/* Пагінація каталогу */
+.pagy {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pagy a,
+.pagy label,
+.pagy span {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* Звичайні сторінки */
+.pagy a {
+  color: #343a40;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  transition: all 0.2s ease;
+}
+
+.pagy a:hover {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #343a40;
+}
+
+/* Активна сторінка */
+.pagy a[aria-current="page"] {
+  color: #fff;
+  background-color: #212529;
+  border-color: #212529;
+  font-weight: 700;
+}
+
+/* Неактивні кнопки */
+.pagy a[aria-disabled="true"],
+.pagy span[aria-disabled="true"] {
+  color: #adb5bd;
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+/* Багатокрапка */
+.pagy label {
+  color: #6c757d;
+  min-width: 24px;
+  padding: 0 4px;
+}

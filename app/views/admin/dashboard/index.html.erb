@@ -1,0 +1,173 @@
+<div class="mb-4">
+  <h1 class="fw-bold">Панель адміністратора</h1>
+  <p class="text-secondary">
+    Управління магазином «Етно-Стиль»
+  </p>
+</div>
+
+<div class="row g-3 mb-4">
+
+  <div class="col-md-6 col-xl-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <p class="text-secondary mb-1">Усього товарів</p>
+        <h2 class="fw-bold"><%= @products_count %></h2>
+        <small class="text-success">
+          Активних: <%= @active_products_count %>
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-xl-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <p class="text-secondary mb-1">Категорії</p>
+        <h2 class="fw-bold"><%= @categories_count %></h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-xl-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <p class="text-secondary mb-1">Замовлення</p>
+        <h2 class="fw-bold"><%= @orders_count %></h2>
+        <small class="text-warning">
+          Нових: <%= @pending_orders_count %>
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-xl-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <p class="text-secondary mb-1">Клієнти</p>
+        <h2 class="fw-bold"><%= @users_count %></h2>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="row g-4">
+
+  <div class="col-lg-8">
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+
+        <h5 class="fw-bold mb-3">Останні замовлення</h5>
+
+        <% if @recent_orders.any? %>
+
+          <div class="table-responsive">
+            <table class="table align-middle">
+
+              <thead>
+                <tr>
+                  <th>№</th>
+                  <th>Покупець</th>
+                  <th>Дата</th>
+                  <th>Сума</th>
+                  <th>Статус</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <% @recent_orders.each do |order| %>
+
+                  <tr>
+                    <td>
+                      <%= link_to "##{order.id}",
+                          admin_order_path(order),
+                          class: "fw-semibold text-decoration-none" %>
+                    </td>
+
+                    <td><%= order.customer_name %></td>
+
+                    <td>
+                      <%= l(order.created_at, format: :short) %>
+                    </td>
+
+                    <td>
+                      <%= number_to_currency(order.total_amount,
+                          unit: "₴", format: "%n %u", precision: 0) %>
+                    </td>
+
+                    <td>
+                      <span class="badge bg-secondary">
+                        <%= order_status_label(order.status) %>
+                      </span>
+                    </td>
+                  </tr>
+
+                <% end %>
+              </tbody>
+
+            </table>
+          </div>
+
+        <% else %>
+
+          <p class="text-secondary mb-0">
+            Замовлень поки немає.
+          </p>
+
+        <% end %>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-lg-4">
+
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-body p-4">
+
+        <h5 class="fw-bold">Швидкий доступ</h5>
+
+        <div class="d-grid gap-2 mt-3">
+
+          <%= link_to "Управління товарами",
+              admin_products_path,
+              class: "btn btn-dark" %>
+
+          <%= link_to "Категорії",
+              admin_categories_path,
+              class: "btn btn-outline-dark" %>
+
+          <%= link_to "Замовлення",
+              admin_orders_path,
+              class: "btn btn-outline-dark" %>
+
+          <%= link_to "Контактні повідомлення",
+              admin_contact_messages_path,
+              class: "btn btn-outline-dark" %>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+
+        <h6 class="fw-bold">Нові звернення</h6>
+
+        <h2 class="fw-bold">
+          <%= @new_messages_count %>
+        </h2>
+
+        <p class="text-secondary small mb-0">
+          Повідомлень, які очікують перегляду.
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

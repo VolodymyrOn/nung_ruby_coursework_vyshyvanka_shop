@@ -1,0 +1,142 @@
+
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Контактні звернення</h1>
+      <p class="text-muted mb-0">Повідомлення від відвідувачів сайту.</p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <span class="badge bg-light text-dark border fs-6">
+        Усього: <%= @messages_count %>
+      </span>
+
+      <span class="badge bg-warning-subtle text-warning-emphasis fs-6">
+        Нові: <%= @new_messages_count %>
+      </span>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <%= form_with url: admin_contact_messages_path,
+          method: :get, local: true do |f| %>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-6">
+            <%= f.label :query, "Пошук",
+                class: "form-label fw-semibold" %>
+
+            <%= f.text_field :query,
+                value: params[:query],
+                class: "form-control",
+                placeholder: "Ім'я, email або тема звернення..." %>
+          </div>
+
+          <div class="col-md-4">
+            <%= f.label :status, "Статус",
+                class: "form-label fw-semibold" %>
+
+            <%= f.select :status,
+                options_for_select(
+                  [["Усі звернення", ""]] +
+                  ContactMessage::STATUSES.map { |status|
+                    [contact_message_status_label(status), status]
+                  },
+                  params[:status]
+                ),
+                {},
+                class: "form-select" %>
+          </div>
+
+          <div class="col-md-2 d-flex gap-2">
+            <%= f.submit "Фільтрувати",
+                class: "btn btn-dark flex-grow-1" %>
+
+            <%= link_to "Скинути",
+                admin_contact_messages_path,
+                class: "btn btn-outline-secondary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+      <strong>Список звернень</strong>
+      <span class="text-muted ms-2">
+        <%= @messages.count %> записів
+      </span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">Відправник</th>
+            <th>Тема</th>
+            <th>Дата</th>
+            <th>Статус</th>
+            <th class="text-end pe-3">Дії</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @messages.each do |message| %>
+            <tr>
+              <td class="ps-3">
+                <div class="fw-semibold"><%= message.name %></div>
+                <small class="text-muted"><%= message.email %></small>
+              </td>
+
+              <td><%= message.subject %></td>
+
+              <td class="text-nowrap">
+                <%= l(message.created_at, format: :short) %>
+              </td>
+
+              <td>
+                <% status_class = {
+                  "new" => "bg-warning-subtle text-warning-emphasis",
+                  "read" => "bg-info-subtle text-info-emphasis",
+                  "answered" => "bg-success-subtle text-success"
+                }.fetch(message.status, "bg-light text-dark") %>
+
+                <span class="badge <%= status_class %>">
+                  <%= contact_message_status_label(message.status) %>
+                </span>
+              </td>
+
+              <td class="text-end pe-3 text-nowrap">
+                <%= link_to admin_contact_message_path(message),
+                    class: "btn btn-sm btn-outline-primary",
+                    title: "Переглянути" do %>
+                  <i class="bi bi-eye"></i>
+                <% end %>
+
+                <%= button_to admin_contact_message_path(message),
+                    method: :delete,
+                    class: "btn btn-sm btn-outline-danger",
+                    form: { class: "d-inline" },
+                    data: {
+                      turbo_confirm: "Видалити це звернення?"
+                    },
+                    title: "Видалити" do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+
+          <% if @messages.empty? %>
+            <tr>
+              <td colspan="5" class="text-center text-muted py-5">
+                Звернень за вибраними параметрами не знайдено.
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
